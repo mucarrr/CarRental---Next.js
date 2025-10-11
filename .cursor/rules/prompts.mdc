@@ -1,0 +1,232 @@
+---
+alwaysApply: true
+---
+# Updated Web Development Standards — Tailwind-only Styling
+
+This guide updates and consolidates best practices, conventions, and standards for modern web development using React, Next.js, Redux Toolkit, TypeScript, JavaScript, HTML, CSS and UI frameworks. **Styling: use Tailwind CSS only.** Component libraries that rely on Tailwind (e.g., shadcn/ui) or unstyled UI primitives (e.g., Radix) are allowed, but all styling must be implemented with Tailwind utility classes and design tokens — no custom CSS frameworks, no CSS-in-JS libraries, and no global stylesheet patterns outside of Tailwind config and CSS variables when strictly necessary.
+
+---
+
+## Development Philosophy
+
+* Write clean, maintainable, and scalable code.
+* Follow SOLID principles where they apply in frontend architectures.
+* Favor functional and declarative patterns over imperative ones.
+* Emphasize type safety and static analysis (TypeScript strict mode enabled).
+* Practice component-driven development (design systems and story-driven workflows).
+
+---
+
+## Code Implementation Guidelines
+
+### Planning Phase
+
+* Start with step-by-step planning and high-level architecture diagrams.
+* Write detailed pseudocode for new features and complex interactions.
+* Document component architecture, data flow (props, context, server state), and API contracts.
+* Enumerate edge cases, failure modes, and desired UX for each error/empty/loading state.
+
+### Code Style
+
+* Indentation: use tabs.
+* Strings: single quotes unless escaping requires double quotes.
+* Semicolons: omit unless required for disambiguation.
+* Remove unused variables and imports before committing.
+* Add a single space after keywords (`if (x)`, `for (const x of y)` — observe the space before the `(` in function declarations where preferred).
+* Use strict equality (`===`) always.
+* Space infix operators and after commas.
+* Keep `else` on the same line as the previous closing curly brace: `} else {`.
+* Use curly braces for multi-line `if` bodies.
+* Always handle error parameters in callbacks and promise rejections.
+* Limit line length to 80 characters; prefer early returns and small helper functions to keep lines short.
+* Use trailing commas in multi-line object/array literals.
+* Configure and enforce these rules via ESLint + Prettier (customized to reflect tabs and semicolon rules) and a pre-commit hook.
+
+---
+
+## Naming Conventions
+
+### General
+
+* **PascalCase**: React components, type definitions, interfaces (e.g. `UserCard`, `UserProps`, `UserState`).
+* **kebab-case**: directory names and filenames (e.g. `components/auth-wizard`, `user-profile.tsx`).
+* **camelCase**: variables, functions, methods, hooks, props (e.g. `fetchUser`, `isLoading`, `userProfile`).
+* **UPPERCASE**: environment variables, constants, global config keys.
+
+### Patterns
+
+* Event handlers prefix: `handleClick`, `handleSubmit`.
+* Boolean prefixes: `is`, `has`, `can`, `should` (e.g., `isLoading`, `hasError`).
+* Custom hooks prefix: `use` (e.g., `useAuth`, `useFormState`).
+* Prefer descriptive full words unless a common abbreviation is standard (`err`, `req`, `res`, `props`, `ref`).
+
+---
+
+## React Best Practices
+
+### Component Architecture
+
+* Use functional components in TypeScript; prefer `function` keyword declarations for components.
+* Define clear interfaces for `props` and small typed utility types.
+* Extract reusable logic into custom hooks (`use*`).
+* Favor composition over prop drilling when possible.
+* Use `React.memo` selectively for pure components that re-render often.
+* Clean up subscriptions and timers inside `useEffect` return functions.
+
+### Performance
+
+* Use `useCallback` for stable callback references passed to memoized children.
+* Use `useMemo` for expensive derived calculations.
+* Avoid inline function definitions in JSX when they cause needless re-renders.
+* Code-split pages and large components with dynamic imports and Next.js lazy-loading patterns.
+* Use stable and meaningful `key` props for lists — avoid `index` unless list is static.
+
+---
+
+## Next.js Best Practices
+
+### Core
+
+* Use the App Router when building new pages (server components by default).
+* Manage metadata with Next.js metadata API and centralize defaults.
+* Use incremental static regeneration (ISR), caching headers, and `fetch` cache options appropriately.
+* Implement error boundaries for client components and fallback UIs for server components.
+
+### Components & Data
+
+* Prefer Next.js built-in components: `Image`, `Link`, `Script`, and the App Router `Head`/metadata helpers.
+* Render explicit loading skeletons for slow network scenarios.
+* Choose the appropriate data-fetching method per route (Server Components / server `fetch`, client fetches when needed, or app-router conventions).
+
+### Server Components
+
+* Default to Server Components for pages and heavy data tasks.
+* Use `use client` only for: event handlers, browser APIs (localStorage, window), client-side state management, and third-party client-only libraries.
+* Prefer URL query parameters for server-side filtering and pagination when they represent navigable state.
+
+---
+
+## TypeScript Implementation
+
+* Enable `strict` mode in `tsconfig` and enforce via CI.
+* Define interfaces for component props, Redux slices, and shared data shapes.
+* Use type guards to narrow `null`/`undefined` states.
+* Use generics for reusable utilities and typed action payloads.
+* Prefer `interface` for extensible object shapes; use `type` for unions and mapped types when appropriate.
+* Use utility types (`Partial`, `Pick`, `Omit`) and mapped types for derived shapes.
+
+---
+
+## UI & Styling — **TAILWIND ONLY**
+
+**Rule:** all styling must be implemented using Tailwind CSS utilities and the project's Tailwind configuration. No alternative styling systems (CSS-in-JS, styled-components, Emotion, plain global CSS frameworks) are permitted except for minimal base CSS that wires Tailwind into the app.
+
+### Component Libraries
+
+* You may use unstyled UI primitives (Radix) and Tailwind-based component libraries (shadcn/ui), but their appearance must be customized via Tailwind classes and tokens.
+* Compose small utility classes and design tokens in `tailwind.config.js` and use `@tailwind` directives only for base wiring.
+
+### Design Tokens & Theming
+
+* Define color palettes, spacing scales, and font sizes in `tailwind.config.js`.
+* Use CSS variables for runtime themes if needed, but expose them via Tailwind using `theme()` and plugin approaches.
+* Implement dark mode using Tailwind’s `dark` strategy (class-based preferred) and centralized token overrides.
+
+### Responsiveness & Accessibility
+
+* Design mobile-first responsive utilities; keep breakpoints consistent across components.
+* Maintain consistent spacing and utility patterns; prefer component-level `@apply` sparingly — prefer direct Tailwind utilities in JSX for clarity.
+* Ensure color contrast meets WCAG ratios; prefer semantic utility names in comments or Tailwind plugin tokens when needed.
+
+---
+
+## State Management
+
+### Local State
+
+* `useState` for simple ephemeral state.
+* `useReducer` for complex state transitions.
+* `useContext` for small shared contexts (theme, auth) with selectors to minimize re-renders.
+
+### Global State
+
+* Use Redux Toolkit for application-level state where needed.
+* Define slices via `createSlice` and keep slices focused by feature.
+* Normalize state shapes to avoid deeply nested trees.
+* Use selectors and memoized selectors (reselect) to encapsulate reads.
+* Avoid a monolithic slice; split state by domain.
+
+---
+
+## Error Handling & Validation
+
+### Forms
+
+* Use React Hook Form for form control and integrate Zod for schema validation.
+* Surface clear, localized error messages and map Zod errors to UI fields.
+
+### Error Boundaries
+
+* Use error boundaries on high-level route boundaries and critical UI islands.
+* Log errors to an external telemetry service (Sentry, Datadog) with contextual metadata.
+* Provide friendly fallback UIs that preserve navigation and allow recovery.
+
+---
+
+## Testing
+
+### Unit Tests
+
+* Use Jest + React Testing Library for unit tests.
+* Follow Arrange–Act–Assert and isolate units by mocking external dependencies.
+* Avoid brittle snapshot overuse; prefer assertions on behavior.
+
+### Integration Tests
+
+* Focus on critical user workflows and component interactions.
+* Properly set up/tear down test environments to preserve test idempotency.
+* Use end-to-end testing (Playwright / Cypress) for cross-page flows where appropriate.
+
+---
+
+## Accessibility (a11y)
+
+* Use semantic HTML and ARIA where necessary.
+* Ensure keyboard navigation, focus management, and correct heading order.
+* Test with screen readers and automated tools; fix issues iteratively.
+
+---
+
+## Security
+
+* Sanitize user-generated HTML (DOMPurify) before rendering.
+* Validate and sanitize inputs on both client and server.
+* Use secure auth flows and store tokens appropriately (httpOnly cookies for sessions where possible).
+
+---
+
+## Internationalization (i18n)
+
+* Use `next-i18next` (or app-router-compatible i18n solutions) to manage translations.
+* Detect locale from URL or headers and format dates/numbers per locale.
+* Implement RTL support using Tailwind dir utilities and localized token adjustments.
+
+---
+
+## Documentation
+
+* Document public functions, components, hooks, and slices using JSDoc-style comments and short examples.
+* Keep README and contribution guides up to date with linting and commit flow instructions.
+* Use Markdown with clear headings, code blocks, and examples.
+
+---
+
+## Enforcement & Tooling
+
+* ESLint (project rules matching style above) and Prettier configured to respect tabs and semicolon rules.
+* Husky pre-commit hooks to run lint-staged and tests.
+* CI pipeline enforces `build`, `type-check`, `lint`, and `test` steps before merge.
+* Storybook for component-driven development (Tailwind-aware storybook config).
+
+---
+

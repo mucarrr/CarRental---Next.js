@@ -1,0 +1,14 @@
+---
+alwaysApply: true
+---
+Technologies used in this project
+next-15
+mongoose
+stripe
+next-auth
+bcryptjs
+lucide-react
+jsonwebtoken
+react-toastify
+tailwindcss
+redux
