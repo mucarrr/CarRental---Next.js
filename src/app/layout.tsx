@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CarRental - Car Rental Service",
-  description: "Your trusted partner for the best car rental experience",
+  title: "DRIVIO - Premium Car Rental",
+  description: "Your journey awaits. Experience premium car rental with DRIVIO - modern, reliable, and affordable.",
 };
 
 export default function RootLayout({
