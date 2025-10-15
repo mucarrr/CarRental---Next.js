@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { useSession } from 'next-auth/react'
 
 export default function LoginPage() {
 	const router = useRouter()
+	const { update } = useSession()
 	const [isLoading, setIsLoading] = useState(false)
 	const [formData, setFormData] = useState({
 		email: '',
@@ -28,6 +30,12 @@ export default function LoginPage() {
 			}
 
 			toast.success('Login successful!')
+			// router.push('/')
+			// router.refresh() is not working. because this is a server component.
+			// Force hard reload to update session
+			// window.location.href = '/' is working but refresh all page.
+			// Update session without full page reload
+			await update()
 			router.push('/')
 			router.refresh()
 		} catch (error) {
@@ -50,12 +58,12 @@ export default function LoginPage() {
 					</p>
 				</div>
 
-				<form onSubmit={handleSubmit} className="mt-8 space-y-6">
-					<div className="space-y-4 rounded-lg bg-white p-8 shadow-md">
-						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-								Email
-							</label>
+			<form onSubmit={handleSubmit} className="mt-8 space-y-6">
+				<div className="space-y-4 rounded-lg bg-white p-8 shadow-md">
+					<div>
+						<label htmlFor="email" className="label-field">
+							Email
+						</label>
 						<input
 							id="email"
 							name="email"
@@ -63,15 +71,15 @@ export default function LoginPage() {
 							required
 							value={formData.email}
 							onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-							className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+							className="input-field"
 							placeholder="you@example.com"
 						/>
-						</div>
+					</div>
 
-						<div>
-							<label htmlFor="password" className="block text-sm font-medium text-gray-700">
-								Password
-							</label>
+					<div>
+						<label htmlFor="password" className="label-field">
+							Password
+						</label>
 						<input
 							id="password"
 							name="password"
@@ -79,10 +87,10 @@ export default function LoginPage() {
 							required
 							value={formData.password}
 							onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-							className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+							className="input-field"
 							placeholder="••••••••"
 						/>
-						</div>
+					</div>
 
 						<button
 							type="submit"

@@ -81,20 +81,20 @@ export default function Footer() {
 						<h3 className="mb-4 text-sm font-semibold text-gray-900">
 							Contact
 						</h3>
-						<ul className="space-y-3 text-sm">
-							<li className="flex items-start space-x-3">
-								<Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-								<span className="text-gray-600">+1 (555) 123-4567</span>
-							</li>
-							<li className="flex items-start space-x-3">
-								<Mail className="h-4 w-4 text-gray-400 mt-0.5" />
-								<span className="text-gray-600">info@carrental.com</span>
-							</li>
-							<li className="flex items-start space-x-3">
-								<MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-								<span className="text-gray-600">New York, USA</span>
-							</li>
-						</ul>
+					<ul className="space-y-3 text-sm">
+						<li className="flex items-start space-x-3">
+							<Phone className="h-4 w-4 text-gray-400 mt-0.5" />
+							<span className="text-gray-600">+1 (416) 555-0123</span>
+						</li>
+						<li className="flex items-start space-x-3">
+							<Mail className="h-4 w-4 text-gray-400 mt-0.5" />
+							<span className="text-gray-600">info@carrental.com</span>
+						</li>
+						<li className="flex items-start space-x-3">
+							<MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+							<span className="text-gray-600">Toronto, Canada</span>
+						</li>
+					</ul>
 					</div>
 				</div>
 
