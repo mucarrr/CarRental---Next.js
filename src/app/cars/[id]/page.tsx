@@ -7,6 +7,7 @@ import CarDescription from './_components/car-description'
 import CarFeatures from './_components/car-features'
 import CarAdditionalInfo from './_components/car-additional-info'
 import CarBookingCard from './_components/car-booking-card'
+import CarReviews from './_components/car-reviews'
 
 async function getCar(id: string) {
 	try {
@@ -53,36 +54,43 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 						{/* Images */}
 						<CarImageGallery images={car.images} brand={car.brand} modelName={car.modelName} />
 
-						{/* Details */}
-						<div className="rounded-xl bg-white p-6 shadow-sm">
-							<CarDetailHeader
-								brand={car.brand}
-								modelName={car.modelName}
-								year={car.year}
-								carType={car.carType}
-								averageRating={car.averageRating}
-								totalReviews={car.totalReviews}
-							/>
+					{/* Details */}
+					<div className="rounded-xl bg-white p-6 shadow-sm">
+						<CarDetailHeader
+							brand={car.brand}
+							modelName={car.modelName}
+							year={car.year}
+							carType={car.carType}
+							averageRating={car.averageRating}
+							totalReviews={car.totalReviews}
+						/>
 
-							<CarSpecifications
-								seats={car.seats}
-								transmission={car.transmission}
-								fuelType={car.fuelType}
-								mileage={car.mileage}
-							/>
+						<CarSpecifications
+							seats={car.seats}
+							transmission={car.transmission}
+							fuelType={car.fuelType}
+							mileage={car.mileage}
+						/>
 
-							<CarDescription description={car.description} />
+						<CarDescription description={car.description} />
 
-							<CarFeatures features={car.features} />
+						<CarFeatures features={car.features} />
 
-							<CarAdditionalInfo
-								location={car.location}
-								licensePlate={car.licensePlate}
-								color={car.color}
-								isAvailable={car.isAvailable}
-							/>
-						</div>
+						<CarAdditionalInfo
+							location={car.location}
+							licensePlate={car.licensePlate}
+							color={car.color}
+							isAvailable={car.isAvailable}
+						/>
 					</div>
+
+					{/* Reviews */}
+					<CarReviews
+						carId={car._id.toString()}
+						averageRating={car.averageRating}
+						totalReviews={car.totalReviews}
+					/>
+				</div>
 
 					{/* Booking Card */}
 					<div className="lg:col-span-1">
