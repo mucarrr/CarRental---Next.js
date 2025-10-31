@@ -101,11 +101,11 @@ export default function HeaderAuth() {
 									My Profile
 								</Link>
 								<Link
-									href="/bookings"
+									href="/orders"
 									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
 									onClick={() => setIsDropdownOpen(false)}
 								>
-									My Bookings
+									My Orders
 								</Link>
 								<button
 									onClick={handleSignOut}

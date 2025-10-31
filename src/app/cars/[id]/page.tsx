@@ -31,7 +31,7 @@ async function getCar(id: string) {
 }
 
 export default async function CarDetailPage({ params }: { params: Promise<{ id: string }> }) {
-	const { id } = await params
+    const { id } = await params
 	const car = await getCar(id)
 
 	if (!car) {
@@ -52,7 +52,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 				</div>
 			</div>
 
-			<div className="container mx-auto max-w-7xl px-4 py-8">
+            <div className="container mx-auto max-w-7xl px-4 py-8">
 				<div className="grid gap-8 lg:grid-cols-3">
 					{/* Main Content */}
 					<div className="lg:col-span-2">
@@ -99,7 +99,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 
 					{/* Booking Card */}
 					<div className="lg:col-span-1">
-						<CarBookingCard pricePerDay={car.pricePerDay} isAvailable={car.isAvailable} />
+						<CarBookingCard pricePerDay={car.pricePerDay} isAvailable={car.isAvailable} carId={car._id.toString()} />
 					</div>
 				</div>
 			</div>

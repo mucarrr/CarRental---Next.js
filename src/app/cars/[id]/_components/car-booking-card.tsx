@@ -6,9 +6,10 @@ import { toast } from 'react-toastify'
 interface CarBookingCardProps {
 	pricePerDay: number
 	isAvailable: boolean
+	carId: string
 }
 
-export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingCardProps) {
+export default function CarBookingCard({ pricePerDay, isAvailable, carId }: CarBookingCardProps) {
 	const [pickupDate, setPickupDate] = useState('')
 	const [dropoffDate, setDropoffDate] = useState('')
 	const [pickupLocation, setPickupLocation] = useState('')
@@ -26,7 +27,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
     toast.error('Car is not available')
     return
    }
-   if (!pickupLocation || !dropoffLocation || !pickupDate || !dropoffDate || !pickupTime || !dropoffTime || !additionalNote || !days || !total) {
+   if (!pickupLocation || !dropoffLocation || !pickupDate || !dropoffDate || !pickupTime || !dropoffTime || days === undefined || total === undefined) {
     toast.error('All fields are required')
     return
    }
@@ -37,7 +38,11 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
    setIsLoading(true)
     const res = await fetch('/api/checkout', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
+            carId,
             pickupLocation,
             dropoffLocation,
             pickupDate,
@@ -50,10 +55,14 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
         }),
     })
     const result = await res.json()
-    if (result.success) {
+    if (result.success && result.session) {
+		// Stripe Checkout URL'ine yönlendir
+		window.location.href = result.session as string
+		return
+    } else if (result.success) {
         toast.success('Checkout successful')
         console.log('Checkout successful for user:', result.user)
-		console.log('Checkout result:', result)
+        console.log('Checkout result:', result)
     } else {
         toast.error(result.error || 'Failed to checkout')
         console.error('Checkout error:', result.error)
