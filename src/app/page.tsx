@@ -1,10 +1,15 @@
 import Link from 'next/link'
+import { headers } from 'next/headers'
 import { Search, MapPin, Calendar } from 'lucide-react'
 import CarCard from '@/components/features/car-card'
 
 async function getFeaturedCars() {
 	try {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/cars?limit=6&sortBy=averageRating&sortOrder=desc`, {
+		const hdrs = await headers()
+		const proto = hdrs.get('x-forwarded-proto') || 'http'
+		const host = hdrs.get('host')
+		const base = `${proto}://${host}`
+		const res = await fetch(`${base}/api/cars?limit=6&sortBy=averageRating&sortOrder=desc`, {
 			cache: 'no-store',
 		})
 		

@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, Types } from 'mongoose'
 
 export interface ICar extends Document {
+	_id: Types.ObjectId
 	brand: string
 	modelName: string
 	year: number

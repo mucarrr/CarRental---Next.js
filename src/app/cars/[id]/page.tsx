@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import CarImageGallery from '@/components/features/car-image-gallery'
 import CarDetailHeader from './_components/car-detail-header'
@@ -11,7 +12,11 @@ import CarReviews from './_components/car-reviews'
 
 async function getCar(id: string) {
 	try {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/cars/${id}`, {
+		const hdrs = await headers()
+		const proto = hdrs.get('x-forwarded-proto') || 'http'
+		const host = hdrs.get('host')
+		const base = `${proto}://${host}`
+		const res = await fetch(`${base}/api/cars/${id}`, {
 			cache: 'no-store',
 		})
 

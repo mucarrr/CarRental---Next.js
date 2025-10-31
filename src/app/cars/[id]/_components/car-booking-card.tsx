@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
+import { toast } from 'react-toastify'
 
 interface CarBookingCardProps {
 	pricePerDay: number
@@ -15,9 +16,51 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 	const [pickupTime, setPickupTime] = useState('')
 	const [dropoffTime, setDropoffTime] = useState('')
 	const [additionalNote, setAdditionalNote] = useState('')
+	const [isLoading, setIsLoading] = useState(false)
 
 	const locations = ['Athens', 'Thessaloniki', 'Heraklion', 'Patras', 'Rhodes', 'Santorini', 'Mykonos', 'Corfu', 'Chania']
 	
+	const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
+   e.preventDefault()
+   if (!isAvailable) {
+    toast.error('Car is not available')
+    return
+   }
+   if (!pickupLocation || !dropoffLocation || !pickupDate || !dropoffDate || !pickupTime || !dropoffTime || !additionalNote || !days || !total) {
+    toast.error('All fields are required')
+    return
+   }
+   if (days < 1) {
+    toast.error('Days must be at least 1')
+    return
+   }
+   setIsLoading(true)
+    const res = await fetch('/api/checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+            pickupLocation,
+            dropoffLocation,
+            pickupDate,
+            dropoffDate,
+            pickupTime,
+            dropoffTime,
+            additionalNote,
+            days,
+            total,
+        }),
+    })
+    const result = await res.json()
+    if (result.success) {
+        toast.success('Checkout successful')
+        console.log('Checkout successful for user:', result.user)
+		console.log('Checkout result:', result)
+    } else {
+        toast.error(result.error || 'Failed to checkout')
+        console.error('Checkout error:', result.error)
+    }
+    setIsLoading(false)
+   }
+
 	// Generate time slots from 09:00 to 20:00 with 30-minute intervals
 	const times = Array.from({ length: 23 }, (_, i) => {
 		const hour = Math.floor(i / 2) + 9
@@ -49,13 +92,14 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 				</div>
 			</div>
 
-		<div className="mb-4 space-y-3">
+		<form onSubmit={handleSubmit} className="mb-4 space-y-3">
 			<div>
 				<label className="label-field mb-2">Pick-up Location</label>
 				<select
 					className="input-field"
 					value={pickupLocation}
 					onChange={(e) => setPickupLocation(e.target.value)}
+					required
 				>
 					<option value="">Select location</option>
 					{locations.map((loc) => (
@@ -73,6 +117,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 						className="input-field"
 						value={pickupDate}
 						onChange={(e) => setPickupDate(e.target.value)}
+						required
 					/>
 				</div>
 				<div>
@@ -81,6 +126,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 						className="input-field"
 						value={pickupTime}
 						onChange={(e) => setPickupTime(e.target.value)}
+						required
 					>
 						<option value="">Select time</option>
 						{times.map((time) => (
@@ -97,6 +143,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 					className="input-field"
 					value={dropoffLocation}
 					onChange={(e) => setDropoffLocation(e.target.value)}
+					required
 				>
 					<option value="">Select location</option>
 					{locations.map((loc) => (
@@ -114,6 +161,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 						className="input-field"
 						value={dropoffDate}
 						onChange={(e) => setDropoffDate(e.target.value)}
+						required
 					/>
 				</div>
 				<div>
@@ -122,7 +170,8 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 						className="input-field"
 						value={dropoffTime}
 						onChange={(e) => setDropoffTime(e.target.value)}
-					>
+						required
+						>
 						<option value="">Select time</option>
 						{times.map((time) => (
 							<option key={time} value={time}>
@@ -144,14 +193,16 @@ export default function CarBookingCard({ pricePerDay, isAvailable }: CarBookingC
 				/>
 				<p className="mt-1 text-xs text-gray-500">{additionalNote.length}/200</p>
 			</div>
-		</div>
-
-		<button
-			disabled={!isAvailable}
+			<button
+			type="submit"
+			disabled={!isAvailable || isLoading}
 			className="mb-4 w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
 		>
-			{isAvailable ? 'Book Now' : 'Not Available'}
+			{isLoading ? 'Loading...' : isAvailable ? 'Book Now' : 'Not Available'}
 		</button>
+		</form>
+
+		
 
 		{days > 0 ? (
 			<div className="space-y-2 border-t border-gray-200 pt-4 text-sm text-gray-600">

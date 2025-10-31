@@ -30,3 +30,15 @@ declare module 'next-auth/jwt' {
 	}
 }
 
+export interface CheckoutBody {
+	pickupLocation: string
+	dropoffLocation: string
+	pickupDate: string
+	dropoffDate: string
+	pickupTime: string
+	dropoffTime: string
+	additionalNote: string
+	days: number
+	total: number
+}
+
