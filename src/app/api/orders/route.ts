@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 		}
 		const body = await req.json()
 		const order = await Order.create({ ...body, userId: new mongoose.Types.ObjectId(user.id) })
-		return NextResponse.json({ success: true, data: { id: order._id.toString() } })
+		return NextResponse.json({ success: true, data: { id: (order as any)._id.toString() } })
 	} catch (err: any) {
 		return NextResponse.json({ success: false, error: err.message ?? 'Internal error' }, { status: 500 })
 	}
