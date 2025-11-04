@@ -557,21 +557,40 @@ const carData = [
 	},
 ]
 
+async function seedDatabase() {
+	await connectDB()
+
+	// Clear existing cars
+	await Car.deleteMany({})
+
+	// Insert new cars
+	const result = await Car.insertMany(carData)
+
+	return NextResponse.json({
+		success: true,
+		message: 'Database seeded successfully',
+		count: result.length,
+	})
+}
+
+export async function GET() {
+	try {
+		return await seedDatabase()
+	} catch (error: any) {
+		console.error('Error seeding database:', error)
+		return NextResponse.json(
+			{
+				success: false,
+				error: error.message || 'Failed to seed database',
+			},
+			{ status: 500 }
+		)
+	}
+}
+
 export async function POST() {
 	try {
-		await connectDB()
-
-		// Clear existing cars
-		await Car.deleteMany({})
-
-		// Insert new cars
-		const result = await Car.insertMany(carData)
-
-		return NextResponse.json({
-			success: true,
-			message: 'Database seeded successfully',
-			count: result.length,
-		})
+		return await seedDatabase()
 	} catch (error: any) {
 		console.error('Error seeding database:', error)
 		return NextResponse.json(

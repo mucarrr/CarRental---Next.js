@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "seed": "curl -X POST http://localhost:3001/api/seed"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
