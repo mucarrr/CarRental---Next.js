@@ -12,11 +12,31 @@ export default function PaymentSuccessModal() {
 
 	useEffect(() => {
 		const success = searchParams.get('success')
-		if (success === 'true') {
+		const sessionId = searchParams.get('session_id')
+		
+		if (success === 'true' && sessionId) {
 			setShow(true)
-			// Clear query parameter from URL
+			
+			// Payment durumunu kontrol et ve order'ı güncelle
+			fetch('/api/orders/verify-payment', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ sessionId }),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					if (data.success && data.status === 'paid') {
+						console.log('Order verified and updated to paid')
+					}
+				})
+				.catch((err) => {
+					console.error('Error verifying payment:', err)
+				})
+			
+			// Clear query parameters from URL
 			const url = new URL(window.location.href)
 			url.searchParams.delete('success')
+			url.searchParams.delete('session_id')
 			window.history.replaceState(null, '', url.toString())
 		}
 	}, [searchParams])

@@ -101,7 +101,7 @@ export async function POST(req: Request) {
         payment_method_types: ['card'],
         line_items: [productInfo],
         mode: 'payment',
-        success_url: `${baseUrl}/cars/${body.carId}?success=true`,
+        success_url: `${baseUrl}/cars/${body.carId}?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/cars/${body.carId}?success=false&session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           orderId: (order as any)._id.toString(),
