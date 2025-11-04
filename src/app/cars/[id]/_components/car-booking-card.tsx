@@ -62,7 +62,7 @@ export default function CarBookingCard({ pricePerDay, isAvailable, carId }: CarB
     } else if (result.success) {
         toast.success('Checkout successful')
         console.log('Checkout successful for user:', result.user)
-        console.log('Checkout result:', result)
+		console.log('Checkout result:', result)
     } else {
         toast.error(result.error || 'Failed to checkout')
         console.error('Checkout error:', result.error)

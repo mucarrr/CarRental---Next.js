@@ -82,15 +82,8 @@ export async function POST(req: Request) {
        const proto = req.headers.get('x-forwarded-proto') || 'http'
        const host = req.headers.get('host') || 'localhost:3000'
        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`
-       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [productInfo],
-        mode: 'payment',
-        success_url: `${baseUrl}/cars/${body.carId}?success=true`,
-        cancel_url: `${baseUrl}/cars/${body.carId}?success=false`,
-       })
-       // create order in DB (pending)
-       await Order.create({
+       // create order in DB (pending) - session oluşturmadan önce
+       const order = await Order.create({
         userId: new mongoose.Types.ObjectId(currentUser.id),
         carId: new mongoose.Types.ObjectId(body.carId),
         pickupLocation: body.pickupLocation,
@@ -102,6 +95,21 @@ export async function POST(req: Request) {
         days: body.days,
         total: body.total,
         status: 'pending',
+       })
+       
+       const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [productInfo],
+        mode: 'payment',
+        success_url: `${baseUrl}/cars/${body.carId}?success=true`,
+        cancel_url: `${baseUrl}/cars/${body.carId}?success=false&session_id={CHECKOUT_SESSION_ID}`,
+        metadata: {
+          orderId: (order as any)._id.toString(),
+        },
+       })
+       
+       // Update order with session ID
+       await Order.findByIdAndUpdate((order as any)._id, {
         stripeSessionId: session.id,
        })
 

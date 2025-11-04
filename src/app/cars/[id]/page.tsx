@@ -10,6 +10,7 @@ import CarAdditionalInfo from './_components/car-additional-info'
 import CarBookingCard from './_components/car-booking-card'
 import CarReviews from './_components/car-reviews'
 import PaymentSuccessModal from './_components/payment-success-modal'
+import PaymentCancelModal from './_components/payment-cancel-modal'
 
 async function getCar(id: string) {
 	try {
@@ -42,6 +43,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 	return (
 		<div className="min-h-screen bg-gray-50">
 			<PaymentSuccessModal />
+			<PaymentCancelModal carId={car._id.toString()} />
 			{/* Back Button */}
 			<div className="border-b border-gray-200 bg-white px-4 py-4">
 				<div className="container mx-auto max-w-7xl">
