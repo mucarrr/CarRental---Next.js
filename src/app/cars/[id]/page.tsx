@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import CarImageGallery from '@/components/features/car-image-gallery'
 import CarDetailHeader from './_components/car-detail-header'
 import CarSpecifications from './_components/car-specifications'
@@ -32,20 +33,115 @@ async function getCar(id: string) {
 	}
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+	const { id } = await params
+	const car = await getCar(id)
+
+	if (!car) {
+		return {
+			title: 'Car Not Found',
+		}
+	}
+
+	const title = `${car.brand} ${car.modelName} ${car.year} - Rent Now | DRIVIO`
+	const description = `Rent ${car.brand} ${car.modelName} ${car.year} from DRIVIO. ${car.transmission} transmission, ${car.seats} seats, ${car.fuelType} fuel. Price: ₺${car.pricePerDay}/day. Book now!`
+	const images = car.images?.[0] || '/og-image.jpg'
+
+	return {
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			type: 'website',
+			images: [
+				{
+					url: images,
+					width: 1200,
+					height: 630,
+					alt: `${car.brand} ${car.modelName}`,
+				},
+			],
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title,
+			description,
+			images: [images],
+		},
+	}
+}
+
 export default async function CarDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+	const { id } = await params
 	const car = await getCar(id)
 
 	if (!car) {
 		notFound()
 	}
 
+	// Structured Data (JSON-LD)
+	const structuredData = {
+		'@context': 'https://schema.org',
+		'@type': 'Product',
+		name: `${car.brand} ${car.modelName}`,
+		description: car.description || `${car.brand} ${car.modelName} ${car.year} - ${car.transmission} transmission, ${car.seats} seats`,
+		brand: {
+			'@type': 'Brand',
+			name: car.brand,
+		},
+		model: car.modelName,
+		productionDate: car.year.toString(),
+		image: car.images || [],
+		offers: {
+			'@type': 'Offer',
+			price: car.pricePerDay,
+			priceCurrency: 'TRY',
+			availability: car.isAvailable ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+			url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/cars/${id}`,
+		},
+		aggregateRating: car.averageRating
+			? {
+					'@type': 'AggregateRating',
+					ratingValue: car.averageRating,
+					reviewCount: car.totalReviews,
+				}
+			: undefined,
+		additionalProperty: [
+			{
+				'@type': 'PropertyValue',
+				name: 'Transmission',
+				value: car.transmission,
+			},
+			{
+				'@type': 'PropertyValue',
+				name: 'Fuel Type',
+				value: car.fuelType,
+			},
+			{
+				'@type': 'PropertyValue',
+				name: 'Seats',
+				value: car.seats.toString(),
+			},
+			{
+				'@type': 'PropertyValue',
+				name: 'Car Type',
+				value: car.carType,
+			},
+		],
+	}
+
 	return (
-		<div className="min-h-screen bg-gray-50">
-			<PaymentSuccessModal />
-			<PaymentCancelModal carId={car._id.toString()} />
-			{/* Back Button */}
-			<div className="border-b border-gray-200 bg-white px-4 py-4">
+		<>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+			/>
+			<article className="min-h-screen bg-gray-50">
+				<PaymentSuccessModal />
+				<PaymentCancelModal carId={car._id.toString()} />
+				{/* Back Button */}
+				<nav className="border-b border-gray-200 bg-white px-4 py-4" aria-label="Breadcrumb">
 				<div className="container mx-auto max-w-7xl">
 					<Link
 						href="/cars"
@@ -54,12 +150,12 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 						← Back to all cars
 					</Link>
 				</div>
-			</div>
+			</nav>
 
-            <div className="container mx-auto max-w-7xl px-4 py-8">
+			<div className="container mx-auto max-w-7xl px-4 py-8">
 				<div className="grid gap-8 lg:grid-cols-3">
 					{/* Main Content */}
-					<div className="lg:col-span-2">
+					<section className="lg:col-span-2">
 						{/* Images */}
 						<CarImageGallery images={car.images} brand={car.brand} modelName={car.modelName} />
 
@@ -99,14 +195,15 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 						averageRating={car.averageRating}
 						totalReviews={car.totalReviews}
 					/>
-				</div>
+					</section>
 
 					{/* Booking Card */}
-					<div className="lg:col-span-1">
+					<aside className="lg:col-span-1">
 						<CarBookingCard pricePerDay={car.pricePerDay} isAvailable={car.isAvailable} carId={car._id.toString()} />
-					</div>
+					</aside>
 				</div>
 			</div>
-		</div>
+			</article>
+		</>
 	)
 }

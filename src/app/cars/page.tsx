@@ -37,7 +37,7 @@ export default function CarsPage() {
 	return (
 		<div className="min-h-screen bg-gray-50">
 			{/* Header */}
-			<div className="border-b border-gray-200 bg-white px-4 py-6">
+			<header className="border-b border-gray-200 bg-white px-4 py-6">
 				<div className="container mx-auto max-w-7xl">
 					<div className="flex items-center justify-between">
 						<div>
@@ -62,13 +62,13 @@ export default function CarsPage() {
 						</div>
 					</div>
 				</div>
-			</div>
+			</header>
 
 			{/* Main Content */}
-			<div className="container mx-auto max-w-7xl px-4 py-8">
+			<main className="container mx-auto max-w-7xl px-4 py-8">
 				<div className="flex gap-8">
 					{/* Filters Sidebar - Desktop */}
-					<div className="hidden lg:block">
+					<aside className="hidden lg:block">
 						<CarsFilters
 							filters={filters}
 							onFilterChange={handleFilterChange}
@@ -79,12 +79,14 @@ export default function CarsPage() {
 							}
 							activeFiltersCount={activeFiltersCount}
 						/>
-					</div>
+					</aside>
 
 					{/* Cars Grid */}
-					<CarsGrid filters={filters} />
+					<article className="flex-1">
+						<CarsGrid filters={filters} />
+					</article>
 				</div>
-			</div>
+			</main>
 		</div>
 	)
 }

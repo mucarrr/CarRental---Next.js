@@ -1,7 +1,18 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
+import type { Metadata } from 'next'
 import { Search, MapPin, Calendar } from 'lucide-react'
 import CarCard from '@/components/features/car-card'
+
+export const metadata: Metadata = {
+	title: 'Home',
+	description: 'Find your perfect ride with DRIVIO. Rent premium cars at the best prices. Easy booking, flexible options, and 24/7 support. Browse our featured collection of high-rated vehicles.',
+	openGraph: {
+		title: 'DRIVIO - Find Your Perfect Ride',
+		description: 'Rent premium cars at the best prices. Easy booking, flexible options, and 24/7 support.',
+		type: 'website',
+	},
+}
 
 async function getFeaturedCars() {
 	try {
@@ -27,9 +38,9 @@ export default async function HomePage() {
 	const { data: featuredCars } = await getFeaturedCars()
 
 	return (
-		<div className="min-h-screen">
+		<>
 			{/* Hero Section */}
-			<section className="relative bg-gradient-to-br from-blue-600 to-blue-800 px-4 py-20 text-white md:py-32">
+			<section className="relative bg-gradient-to-br from-blue-600 to-blue-800 px-4 py-20 text-white md:py-32" aria-label="Hero section">
 				<div className="container mx-auto max-w-6xl">
 					<div className="mx-auto max-w-3xl text-center">
 						<h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl">
@@ -75,7 +86,7 @@ export default async function HomePage() {
 			</section>
 
 			{/* Featured Cars */}
-			<section className="px-4 py-16">
+			<section className="px-4 py-16" aria-label="Featured cars">
 				<div className="container mx-auto max-w-7xl">
 					<div className="mb-10 flex items-center justify-between">
 						<div>
@@ -119,7 +130,7 @@ export default async function HomePage() {
 			</section>
 
 			{/* Why Choose Us */}
-			<section className="bg-gray-50 px-4 py-16">
+			<section className="bg-gray-50 px-4 py-16" aria-label="Why choose us">
 				<div className="container mx-auto max-w-7xl">
 					<h2 className="mb-10 text-center text-3xl font-bold text-gray-900">Why Choose Us</h2>
 					<div className="grid gap-8 md:grid-cols-3">
@@ -153,6 +164,6 @@ export default async function HomePage() {
 					</div>
 				</div>
 			</section>
-		</div>
+		</>
 	)
 }

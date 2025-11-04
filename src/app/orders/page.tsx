@@ -1,12 +1,22 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import { getCurrentUser } from '@/lib/auth-utils'
 import connectDB from '@/lib/mongodb'
 import Order from '@/models/order'
 import Car from '@/models/car'
 import mongoose from 'mongoose'
 import OrdersClient from './_components/orders-client'
+
+export const metadata: Metadata = {
+	title: 'My Orders',
+	description: 'View and manage your car rental orders. Track your bookings, payment status, and rental history.',
+	robots: {
+		index: false,
+		follow: false,
+	},
+}
 
 export default async function OrdersPage() {
 	const user = await getCurrentUser()
@@ -56,12 +66,12 @@ export default async function OrdersPage() {
 	}))
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<main className="min-h-screen bg-gray-50">
 			<div className="container mx-auto max-w-5xl px-4 py-8">
 				<h1 className="mb-8 text-3xl font-bold text-gray-900">My Orders</h1>
 				<OrdersClient orders={ordersWithCars} />
 			</div>
-		</div>
+		</main>
 	)
 }
 

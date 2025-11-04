@@ -6,9 +6,9 @@ export default function Header() {
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
-			<div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-			{/* Left: Logo */}
-			<Link href="/" className="flex items-center space-x-3">
+			<nav className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6" aria-label="Main navigation">
+				{/* Left: Logo */}
+				<Link href="/" className="flex items-center space-x-3" aria-label="DRIVIO Home">
 				<div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 shadow-lg ring-2 ring-blue-100">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="h-5 w-5">
 						<path d="M3.375 4.5C2.339 4.5 1.5 5.34 1.5 6.375V13.5h12V6.375c0-1.036-.84-1.875-1.875-1.875h-8.25zM13.5 15h-12v2.625c0 1.035.84 1.875 1.875 1.875h.375a3 3 0 116 0h3a.75.75 0 00.75-.75V15z" />
@@ -38,10 +38,10 @@ export default function Header() {
 				<div className="flex items-center space-x-4">
 					<HeaderAuth />
 				</div>
-			</div>
+			</nav>
 
 			{/* Mobile Search */}
-			<div className="border-t border-gray-200 px-4 py-3 md:hidden">
+			<div className="border-t border-gray-200 px-4 py-3 md:hidden" aria-label="Mobile search">
 				<div className="relative w-full">
 					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
 					<input
